@@ -35,8 +35,10 @@
 package com.raywenderlich.android.memories.ui.settings
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.FileUtils
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -81,7 +83,12 @@ class SettingsFragment : Fragment() {
     super.onActivityResult(requestCode, resultCode, data)
 
     if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK) {
+      val context = activity as? Context ?: return
       val selectedImage = data?.data ?: return
+      val fileUri = FileUtils.getImagePathFromInputStreamUri(selectedImage,
+        context.contentResolver,
+        context
+      )
 
     }
   }
