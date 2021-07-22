@@ -52,4 +52,6 @@ class RemoteApi(private val apiService: RemoteApiService) {
   } catch (error: Throwable) {
     Failure(error)
   }
+
+
 }

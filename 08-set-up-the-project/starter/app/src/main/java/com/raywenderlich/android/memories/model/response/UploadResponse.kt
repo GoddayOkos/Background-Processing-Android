@@ -1,4 +1,7 @@
 package com.raywenderlich.android.memories.model.response
 
-class UploadResponse {
-}
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+class UploadResponse(val message: String = "", val url: String = "")
