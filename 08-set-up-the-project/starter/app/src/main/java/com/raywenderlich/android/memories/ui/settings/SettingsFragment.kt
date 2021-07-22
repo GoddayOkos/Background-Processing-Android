@@ -38,13 +38,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.FileUtils
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.raywenderlich.android.memories.R
+import com.raywenderlich.android.memories.utils.FileUtils
+import com.raywenderlich.android.memories.worker.UploadImageWorker
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 /**
@@ -90,6 +94,12 @@ class SettingsFragment : Fragment() {
         context
       )
 
+      val worker = OneTimeWorkRequestBuilder<UploadImageWorker>()
+        .setInputData(workDataOf("image_path" to fileUri))
+        .build()
+
+      WorkManager.getInstance(context)
+        .enqueue(worker)
     }
   }
 }
