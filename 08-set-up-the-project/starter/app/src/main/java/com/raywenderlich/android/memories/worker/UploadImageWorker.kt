@@ -21,5 +21,4 @@ class UploadImageWorker(context: Context, workerParameters: WorkerParameters) :
             Result.failure()
         }
     }
-
 }
