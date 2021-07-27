@@ -11,11 +11,7 @@ class SynchronizeImageWorker(context: Context, workerParameters: WorkerParameter
 
     override fun doWork(): Result {
         val images = inputData.getStringArray("images") ?: return Result.failure()
-
-        images.forEach { imagePath ->
-            val file = File(applicationContext.externalMediaDirs.first(), imagePath)
-            FileUtils.downloadImage(file, imagePath)
-        }
+        FileUtils.queueImagesForDownload(applicationContext, images)
         return Result.success()
     }
 }

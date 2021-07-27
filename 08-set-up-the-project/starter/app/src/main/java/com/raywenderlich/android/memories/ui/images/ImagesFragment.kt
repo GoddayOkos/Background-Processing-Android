@@ -52,12 +52,14 @@ import com.raywenderlich.android.memories.model.result.Success
 import com.raywenderlich.android.memories.networking.BASE_URL
 import com.raywenderlich.android.memories.networking.NetworkStatusChecker
 import com.raywenderlich.android.memories.ui.images.dialog.ImageOptionsDialogFragment
+import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.utils.gone
 import com.raywenderlich.android.memories.utils.toast
 import com.raywenderlich.android.memories.utils.visible
 import com.raywenderlich.android.memories.worker.DownloadImageWorker
 import com.raywenderlich.android.memories.worker.LocalImageCheckWorker
 import kotlinx.android.synthetic.main.fragment_images.*
+import kotlinx.android.synthetic.main.item_image.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -125,19 +127,7 @@ class ImagesFragment : Fragment(), ImageOptionsDialogFragment.ImageOptionsListen
         val isDownloaded = info.outputData.getBoolean("is_downloaded", false)
 
         if (!isDownloaded) {
-          val file = File(requireContext().externalMediaDirs.first(), imageUrl)
-
-          // Build the download manager
-          val request = DownloadManager.Request(Uri.parse("$BASE_URL/files/$imageUrl"))
-            .setTitle("Image download")
-            .setDescription("Downloading")
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-            .setDestinationUri(Uri.fromFile(file))
-            .setAllowedOverMetered(true)
-            .setAllowedOverRoaming(false)
-
-          val downloadManager = requireContext().getSystemService(DownloadManager::class.java)
-          downloadManager?.enqueue(request)
+          FileUtils.queueImagesForDownload(requireContext(), arrayOf(imageUrl))
         }
       }
     })
