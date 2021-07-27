@@ -12,7 +12,7 @@ class UploadImageWorker(context: Context, workerParameters: WorkerParameters) :
     private val remoteApi by lazy { App.remoteApi }
 
     override suspend fun doWork(): Result {
-        val imagePath = inputData.getString("imagePath") ?: return Result.failure()
+        val imagePath = inputData.getString("image_path") ?: return Result.failure()
         val result = remoteApi.uploadImage(File(imagePath))
 
         return if (result.message == "Success") {
