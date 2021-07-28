@@ -35,6 +35,7 @@
 package com.raywenderlich.android.memories.ui.images
 
 import android.app.DownloadManager
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
@@ -51,6 +52,7 @@ import com.raywenderlich.android.memories.model.Image
 import com.raywenderlich.android.memories.model.result.Success
 import com.raywenderlich.android.memories.networking.BASE_URL
 import com.raywenderlich.android.memories.networking.NetworkStatusChecker
+import com.raywenderlich.android.memories.service.DownloadService
 import com.raywenderlich.android.memories.ui.images.dialog.ImageOptionsDialogFragment
 import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.utils.gone
@@ -108,29 +110,33 @@ class ImagesFragment : Fragment(), ImageOptionsDialogFragment.ImageOptionsListen
   }
 
   override fun onImageDownload(imageUrl: String) {
-    val constraints = Constraints.Builder()
-      .setRequiredNetworkType(NetworkType.NOT_ROAMING)
-      .setRequiresBatteryNotLow(true)
-      .setRequiresStorageNotLow(true)
-      .build()
+    val intent = Intent(activity, DownloadService::class.java)
+    intent.putExtra("image_path", imageUrl)
 
-    val imageCheckWorker = OneTimeWorkRequestBuilder<LocalImageCheckWorker>()
-      .setInputData(workDataOf("image_path" to imageUrl))
-      .setConstraints(constraints)
-      .build()
-
-    val workManager = WorkManager.getInstance(requireContext())
-    workManager.enqueue(imageCheckWorker)
-
-    workManager.getWorkInfoByIdLiveData(imageCheckWorker.id).observe(this, Observer { info ->
-      if (info?.state?.isFinished == true) {
-        val isDownloaded = info.outputData.getBoolean("is_downloaded", false)
-
-        if (!isDownloaded) {
-          FileUtils.queueImagesForDownload(requireContext(), arrayOf(imageUrl))
-        }
-      }
-    })
+    activity?.startService(intent)
+//    val constraints = Constraints.Builder()
+//      .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+//      .setRequiresBatteryNotLow(true)
+//      .setRequiresStorageNotLow(true)
+//      .build()
+//
+//    val imageCheckWorker = OneTimeWorkRequestBuilder<LocalImageCheckWorker>()
+//      .setInputData(workDataOf("image_path" to imageUrl))
+//      .setConstraints(constraints)
+//      .build()
+//
+//    val workManager = WorkManager.getInstance(requireContext())
+//    workManager.enqueue(imageCheckWorker)
+//
+//    workManager.getWorkInfoByIdLiveData(imageCheckWorker.id).observe(this, Observer { info ->
+//      if (info?.state?.isFinished == true) {
+//        val isDownloaded = info.outputData.getBoolean("is_downloaded", false)
+//
+//        if (!isDownloaded) {
+//          FileUtils.queueImagesForDownload(requireContext(), arrayOf(imageUrl))
+//        }
+//      }
+//    })
   }
 
   private fun getAllImages() {
