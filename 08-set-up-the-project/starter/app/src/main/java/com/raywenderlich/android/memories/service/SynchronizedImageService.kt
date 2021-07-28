@@ -9,6 +9,7 @@ import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
 import com.raywenderlich.android.memories.App
 import com.raywenderlich.android.memories.model.result.Success
+import com.raywenderlich.android.memories.receiver.ACTION_IMAGES_SYNCHRONIZED
 import com.raywenderlich.android.memories.ui.main.MainActivity
 import com.raywenderlich.android.memories.utils.FileUtils
 import kotlinx.coroutines.GlobalScope
@@ -70,6 +71,10 @@ class SynchronizedImageService : Service() {
                 val imageArray = result.data.map { it.imagePath }.toTypedArray()
 
                 FileUtils.queueImagesForDownload(applicationContext, imageArray)
+                stopForeground(true)
+                sendBroadcast(Intent().apply {
+                    action = ACTION_IMAGES_SYNCHRONIZED
+                })
             }
         }
     }
@@ -77,6 +82,4 @@ class SynchronizedImageService : Service() {
     private fun clearStorage() {
         FileUtils.clearLocalStorage(applicationContext)
     }
-
-
 }
