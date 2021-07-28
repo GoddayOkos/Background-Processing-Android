@@ -34,7 +34,7 @@ class UploadService : JobIntentService() {
             val result = remoteApi.uploadImage(File(filePath))
 
             val intent = Intent().also {
-                it.putExtra("is_uploaded", result.message == "Success")
+                it.putExtra("is_uploaded", result.message == "Success!")
                 it.action = ACTION_IMAGE_UPLOAD
             }
 
