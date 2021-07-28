@@ -2,19 +2,27 @@ package com.raywenderlich.android.memories.service
 
 import android.app.IntentService
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import androidx.core.app.JobIntentService
 import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.utils.toast
 import java.io.File
 
-const val SERVICE_NAME = "Download image service"
+class DownloadService : JobIntentService() {
 
-class DownloadService : IntentService(SERVICE_NAME) {
+    companion object {
+        private const val JOB_ID = 10
 
-    override fun onHandleIntent(intent: Intent?) {
-        val imagePath = intent?.getStringExtra("image_path")
+        fun startWork(context: Context, intent: Intent) {
+            enqueueWork(context, DownloadService::class.java, JOB_ID, intent)
+        }
+    }
+
+    override fun onHandleWork(intent: Intent) {
+        val imagePath = intent.getStringExtra("image_path")
 
         if (imagePath != null) {
             downloadImage(imagePath)
