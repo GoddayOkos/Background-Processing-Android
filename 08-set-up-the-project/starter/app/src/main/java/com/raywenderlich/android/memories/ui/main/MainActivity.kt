@@ -42,9 +42,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.raywenderlich.android.memories.R
 import com.raywenderlich.android.memories.receiver.ACTION_IMAGES_SYNCHRONIZED
+import com.raywenderlich.android.memories.receiver.ACTION_IMAGE_UPLOAD
 import com.raywenderlich.android.memories.receiver.SynchronizeImagesReceiver
+import com.raywenderlich.android.memories.receiver.UploadImageReceiver
 import com.raywenderlich.android.memories.service.DownloadService
-import com.raywenderlich.android.memories.utils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -55,9 +56,16 @@ class MainActivity : AppCompatActivity() {
 
   private val pagerAdapter by lazy { MainPagerAdapter(supportFragmentManager) }
 
-  private val receiver by lazy {
+  private val synchronizeImagesReceiver by lazy {
     SynchronizeImagesReceiver {
       Snackbar.make(tabs, "Images synchronized!", Snackbar.LENGTH_LONG).show()
+    }
+  }
+
+  private val uploadImageReceiver by lazy {
+    UploadImageReceiver {
+      Snackbar.make(tabs, if (it) "Image uploaded!" else "Upload failed!", Snackbar.LENGTH_LONG)
+        .show()
     }
   }
 
@@ -80,8 +88,12 @@ class MainActivity : AppCompatActivity() {
   override fun onStart() {
     super.onStart()
 
-    registerReceiver(receiver, IntentFilter().apply {
+    registerReceiver(synchronizeImagesReceiver, IntentFilter().apply {
       addAction(ACTION_IMAGES_SYNCHRONIZED)
+    })
+
+    registerReceiver(uploadImageReceiver, IntentFilter().apply {
+      addAction(ACTION_IMAGE_UPLOAD)
     })
   }
 
@@ -94,7 +106,8 @@ class MainActivity : AppCompatActivity() {
     val intent = Intent(this, DownloadService::class.java)
     stopService(intent)
 
-    unregisterReceiver(receiver)
+    unregisterReceiver(synchronizeImagesReceiver)
+    unregisterReceiver(uploadImageReceiver)
     super.onStop()
   }
 }
