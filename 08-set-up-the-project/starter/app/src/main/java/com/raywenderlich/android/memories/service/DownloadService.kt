@@ -1,5 +1,6 @@
 package com.raywenderlich.android.memories.service
 
+import android.app.IntentService
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
@@ -8,13 +9,11 @@ import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.utils.toast
 import java.io.File
 
-class DownloadService : Service() {
+const val SERVICE_NAME = "Download image service"
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+class DownloadService : IntentService(SERVICE_NAME) {
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onHandleIntent(intent: Intent?) {
         val imagePath = intent?.getStringExtra("image_path")
 
         if (imagePath != null) {
@@ -23,15 +22,11 @@ class DownloadService : Service() {
             Log.d("Missing image path", "Stopping service")
             stopSelf()
         }
-
-        return START_NOT_STICKY
     }
 
     private fun downloadImage(imagePath: String) {
-        Thread {
             val file = File(applicationContext.externalMediaDirs.first(), imagePath)
             FileUtils.downloadImage(file, imagePath)
-        }.start()
     }
 
     override fun onDestroy() {
