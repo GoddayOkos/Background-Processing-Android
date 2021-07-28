@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.raywenderlich.android.memories.utils.FileUtils
+import com.raywenderlich.android.memories.utils.toast
 import java.io.File
 
 class DownloadService : Service() {
@@ -31,5 +32,10 @@ class DownloadService : Service() {
             val file = File(applicationContext.externalMediaDirs.first(), imagePath)
             FileUtils.downloadImage(file, imagePath)
         }.start()
+    }
+
+    override fun onDestroy() {
+        applicationContext?.toast("Stopping service!")
+        super.onDestroy()
     }
 }
