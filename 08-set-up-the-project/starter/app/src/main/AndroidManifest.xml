@@ -30,6 +30,9 @@
 
     <service android:name=".service.DownloadService"
        android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <service android:name=".service.SynchronizedImageService"
+      android:permission="android.permission.BIND_JOB_SERVICE" />
   </application>
 
 </manifest>
